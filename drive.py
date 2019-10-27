@@ -11,11 +11,11 @@ import eventlet.wsgi
 from PIL import Image
 from flask import Flask
 from io import BytesIO
-import utils
 
 from keras.models import load_model
 import h5py
 from keras import __version__ as keras_version
+import utils
 
 sio = socketio.Server()
 app = Flask(__name__)
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # check that model Keras version is same as local Keras version
-    f = h5py.File("model.h5", mode='r')
+    f = h5py.File(args.model, mode='r')
     model_version = f.attrs.get('keras_version')
     keras_version = str(keras_version).encode('utf8')
 
