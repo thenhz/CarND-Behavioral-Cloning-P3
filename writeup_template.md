@@ -84,24 +84,40 @@ The overall strategy for deriving a model architecture was to start by preproces
 Data is collected from the images coming from left, center and right camera.
 Since we have only steering angle for center image, I've adjusted the steering angle for left_image by adding a tiny value  and similarely for right_image (by subtracting the same tiny value)
 
-Talking about the model, I started with a Lambda layer to normalize the coming images. Five convolutiona layers then have been applied with different kernel and strides, to capture different features from the same image. 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
+Talking about the model, I started with a Lambda layer to normalize the coming images. Five convolutional layers then have been applied with different kernel and strides, to capture different features from the same image. 
+In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. My first models where probably too simple so I've increased the number of convolutional layer to let the model be able to correcty understand the images. After some time, playing with the hyperparameters, I landed to a model that was overfitting since the loss was very low on training but did't decrease as well on validation. I've tried to add regularizers and dropouts but in the end the success came from lowering the number of concolutional used and using a dropout. 
 
-To combat the overfitting, I modified the model so that ...
+The final step was to run the simulator to see how well the car was driving around track one. There were just one point where the car fell of the track (when I started to see the lake..probably interpreted as a road since I noticed clearly that was steering toward the lake) but was enough to train for several epochs more to get rid of this behaviour
 
-Then I ... 
-
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
-
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road. I've tested even on track 2 and the car is driving very well except for one point where the car sees the road it's walking and a piece of road in the background that fool the model.
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
+The final model architecture (model.py lines 25-43) consisted of the following layers:
 
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
+| Layer         		|     Description	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| Input         		| 66x200x3 RGB image   							| 
+| Lambda         		| Normalizing and adjusting mean				|  
+| Convolution 5x5x24   	| 2x2 stride, same padding                      |
+| RELU					|												|
+| Convolution 5x5x36   	| 2x2 stride, same padding                      |
+| RELU					|												|
+| Convolution 5x5x48   	| 2x2 stride, same padding                      |
+| RELU					|												|
+| Convolution 3x3x64   	| 2x2 stride, same padding                      |
+| RELU					|												|
+| Convolution 3x3x64   	| 3x3 stride, same padding                      |
+| RELU					|												|
+| Flatten               | Flattening to link with Dense layer           |
+| Dropout               | Droput with 50% probability                   |
+| Dense         	    | 100 neurons  									|
+| RELU					|												|
+| Dense         	    | 50 neurons  									|
+| RELU					|												|
+| Dense         	    | 10 neurons  									|
+| Dense         	    | 1 neurons  									|
 
-![alt text][image1]
 
 #### 3. Creation of the Training Set & Training Process
 
