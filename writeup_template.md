@@ -120,7 +120,7 @@ The final model architecture (model.py lines 25-43) consisted of the following l
 
 #### 3. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving, then one  in the opposite way, and two laps of track two and even here one in the opposite way. Here is an example image of center camera:
+To capture good driving behavior, I first recorded three laps on track one using center lane driving and some recoveries, then three  in the opposite way. The same happened for the other track. Here is an example image of center camera:
 
 ![alt text][image2]
 
