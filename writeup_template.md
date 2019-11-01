@@ -15,12 +15,11 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
+[image2]: ./doc_images/center.jpg "Center"
+[image3]: ./doc_images/left_opposite_1.jpg "Inverse"
+[image4]: ./doc_images/aug1.jpg "Flipped Image"
+[image5]: ./doc_images/aug2.jpg "Shifted Image"
+[image6]: ./doc_images/preprocessed.jpg "Preprocessed Image"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -67,7 +66,7 @@ The model used an adam optimizer, so the learning rate was not tuned manually (m
 
 #### 4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road and driving inversely. Data has been gathered even on the second track to be able to feed different landscape leading to a more stable training
+Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving and driving inversely. Data has been gathered even from the second track to be able to feed different landscape and thus leading to a more stable training
 
 For details about how I preprocessed the training data, see the next section. 
 
@@ -85,11 +84,11 @@ Data is collected from the images coming from left, center and right camera.
 Since we have only steering angle for center image, I've adjusted the steering angle for left_image by adding a tiny value  and similarely for right_image (by subtracting the same tiny value)
 
 Talking about the model, I started with a Lambda layer to normalize the coming images. Five convolutional layers then have been applied with different kernel and strides, to capture different features from the same image. 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. My first models where probably too simple so I've increased the number of convolutional layer to let the model be able to correcty understand the images. After some time, playing with the hyperparameters, I landed to a model that was overfitting since the loss was very low on training but did't decrease as well on validation. I've tried to add regularizers and dropouts but in the end the success came from lowering the number of concolutional used and using a dropout. 
+In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. My first models where probably too simple so I've increased the number of convolutional layer to let the model be able to correctly understand the images. After some time, playing with the hyperparameters, I landed to a model that was overfitting since the loss was very low on training but did't decrease as well on validation. I've tried to add regularizers and dropouts but in the end the success came from lowering the number of convolutional used and using a dropout. 
 
-The final step was to run the simulator to see how well the car was driving around track one. There were just one point where the car fell of the track (when I started to see the lake..probably interpreted as a road since I noticed clearly that was steering toward the lake) but was enough to train for several epochs more to get rid of this behaviour
+The final step was to run the simulator to see how well the car was driving around track one. At the begin there were just one point where the car fell of the track (when it started to see the lake..probably interpreted as a road since I noticed clearly that it was steering toward the lake) but in the end it  was enough to train for several epochs more to get rid of this behaviour
 
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road. I've tested even on track 2 and the car is driving very well except for one point where the car sees the road it's walking and a piece of road in the background that fool the model.
+At the end of the process, the vehicle was able to drive autonomously around the track without leaving the road. I've tested even on track 2 and the car is driving very well except for one point where the car sees one road in the foreground and one in the background very close and then it goes off road very badly.
 
 #### 2. Final Model Architecture
 
@@ -121,28 +120,26 @@ The final model architecture (model.py lines 25-43) consisted of the following l
 
 #### 3. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
+To capture good driving behavior, I first recorded two laps on track one using center lane driving, then one  in the opposite way, and two laps of track two and even here one in the opposite way. Here is an example image of center camera:
 
 ![alt text][image2]
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
+I then recorded the vehicle driving in the opposite way. Example below is from track 1
 
 ![alt text][image3]
-![alt text][image4]
-![alt text][image5]
 
 Then I repeated this process on track two in order to get more data points.
 
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
+To augment the dataset, I also augmented the images by applying random shift, flip and brightness to let the net learn in a more generic and stable way. For example, here are two images that starting from the first image above; one has then been flipped and the other shifted and augmented:
+
+![alt text][image4]
+![alt text][image5]
+
+After the collection process, I preprocessed this data by following and applying some operations described in the NVIDIA paper such as cropping to a specific size and using YUV
 
 ![alt text][image6]
-![alt text][image7]
-
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
 
 
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
+I finally randomly shuffled the data set and put 20% of the data into a validation set. 
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. I've used even the callback EarlyStopping and CheckPoint to let the model train the best it can. Obiously I've saved only the best model based on the lowest validation loss. I used an adam optimizer so that manually training the learning rate wasn't necessary.
